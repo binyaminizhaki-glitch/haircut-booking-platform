@@ -1,0 +1,10 @@
+{
+  "description": "Create fully functional Hebrew websites effortlessly with this user-friendly platform, designed for individuals and businesses seeking a local online presence.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

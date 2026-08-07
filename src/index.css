@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+
+@import 'tailwindcss';
+
+@theme inline {
+  --color-background: #F3EEE5;
+  --color-surface: #FFFDF8;
+  --color-ink: #181715;
+  --color-ink-secondary: #6D6860;
+  --color-ink-muted: #8C857B;
+  --color-border: #D8D1C5;
+  --color-border-strong: #BDB4A7;
+  --color-brand: #7A283D;
+  --color-brand-hover: #5E1D2D;
+  --color-brand-pressed: #4C1724;
+  --color-dark: #211B1C;
+  --color-dark-raised: #2D2527;
+  --color-lime: #C8F36A;
+  --color-lime-muted: #E9F9BF;
+  --color-terracotta: #D97855;
+  --color-success: #397458;
+  --color-success-bg: #E1F0E8;
+  --color-warning: #E7A35F;
+  --color-warning-bg: #F9E9D7;
+  --color-error: #C94B4B;
+  --color-error-bg: #F8E2E2;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-family: 'Heebo', system-ui, sans-serif;
+  background-color: #F3EEE5;
+  color: #181715;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+*:focus-visible {
+  outline: 2px solid #7A283D;
+  outline-offset: 2px;
+}
+
+/* Remove default blue from inputs */
+input, select, textarea, button {
+  font-family: inherit;
+  accent-color: #7A283D;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  background: #7A283D;
+}
+
+/* No scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #BDB4A7;
+  border-radius: 3px;
+}
+
+/* Cut Line motif */
+.cut-line {
+  height: 2px;
+  background-color: #7A283D;
+}
+
+/* RTL number handling */
+[dir="rtl"] .ltr-number {
+  direction: ltr;
+  unicode-bidi: embed;
+}
