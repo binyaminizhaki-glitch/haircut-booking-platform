@@ -229,6 +229,19 @@ export async function handleGeminiChat(
 
     const data = (await response.json().catch(() => null)) as unknown
     if (!response.ok) {
+      const upstreamError =
+        data && typeof data === "object" && "error" in data
+          ? (data as { error?: { code?: number; message?: string; status?: string } })
+              .error
+          : undefined
+
+      console.error("Gemini API request failed", {
+        status: response.status,
+        code: upstreamError?.code,
+        reason: upstreamError?.status,
+        message: upstreamError?.message,
+      })
+
       const retryable = response.status === 429 || response.status >= 500
       return sendJson(res, retryable ? 503 : 502, {
         error: retryable
