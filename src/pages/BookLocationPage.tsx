@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ArrowRight, Home, Building2, Hotel, MapPin } from 'lucide-react'
+import { ArrowRight, Home, Building2, Hotel, MapPin, LocateFixed, LoaderCircle } from 'lucide-react'
 import BookingProgress from '../components/BookingProgress'
-import JerusalemMap from '../components/JerusalemMap'
+import { LocationMap } from '../components/ui/expanded-map'
 
 const locationTypes = [
   { id: 'home', label: 'בית', icon: Home },
@@ -21,15 +21,40 @@ const timeOptions = [
 export default function BookLocationPage() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const initialDetectedLocation = state?.detectedLocation as { latitude: number; longitude: number } | undefined
   const [locType, setLocType] = useState('home')
-  const [street, setStreet] = useState('רחוב עזה')
-  const [num, setNum] = useState('32')
-  const [city, setCity] = useState('ירושלים')
+  const [street, setStreet] = useState('')
+  const [num, setNum] = useState('')
+  const [city, setCity] = useState('')
   const [floor, setFloor] = useState('')
   const [apt, setApt] = useState('')
   const [timeOpt, setTimeOpt] = useState('now')
+  const [coordinates, setCoordinates] = useState(initialDetectedLocation || { latitude: 32.0853, longitude: 34.7818 })
+  const [usingCurrentLocation, setUsingCurrentLocation] = useState(Boolean(initialDetectedLocation))
+  const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'error'>('idle')
 
-  const canContinue = street && num && city
+  const canContinue = usingCurrentLocation || Boolean(street && num && city)
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('error')
+      return
+    }
+
+    setLocationStatus('loading')
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setCoordinates({ latitude: coords.latitude, longitude: coords.longitude })
+        setUsingCurrentLocation(true)
+        setStreet('המיקום הנוכחי')
+        setNum('GPS')
+        setCity('המיקום שלך')
+        setLocationStatus('idle')
+      },
+      () => setLocationStatus('error'),
+      { enableHighAccuracy: true, timeout: 10000 },
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#F3EEE5] pb-24">
@@ -46,10 +71,37 @@ export default function BookLocationPage() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-6">
-        {/* Map */}
-        <div className="h-[180px] rounded-[16px] overflow-hidden">
-          <JerusalemMap dark={false} showRoute={false} className="rounded-[16px]" />
-        </div>
+        {/* Interactive location preview */}
+        <section aria-labelledby="location-preview-title">
+          <div className="mb-3 flex items-end justify-between gap-3">
+            <div>
+              <p id="location-preview-title" className="text-[14px] font-semibold text-[#181715]">
+                נקודת ההגעה
+              </p>
+              <p className="mt-0.5 text-[12px] text-[#8C857B]">ודאו שהסיכה נמצאת באזור הנכון</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-[#E9F9BF] px-2.5 py-1 text-[11px] font-semibold text-[#397458]">פריסה ארצית</span>
+          </div>
+          <LocationMap
+            location={usingCurrentLocation ? 'המיקום הנוכחי שלך' : street || city ? `${street || 'רחוב'} ${num || ''}, ${city}` : 'בחרו כתובת בכל מקום בארץ'}
+            latitude={coordinates.latitude}
+            longitude={coordinates.longitude}
+            zoom={15}
+            defaultExpanded
+          />
+          <button
+            type="button"
+            onClick={handleUseCurrentLocation}
+            disabled={locationStatus === 'loading'}
+            className="mt-3 flex h-[46px] w-full items-center justify-center gap-2 rounded-[12px] border border-[#7A283D]/25 bg-[#FFFDF8] text-[14px] font-semibold text-[#7A283D] transition-colors hover:bg-[#7A283D]/5 disabled:opacity-60"
+          >
+            {locationStatus === 'loading' ? <LoaderCircle size={17} className="animate-spin" /> : <LocateFixed size={17} />}
+            {locationStatus === 'loading' ? 'מאתר את המיקום שלך...' : usingCurrentLocation ? 'המיקום שלך זוהה' : 'השתמש במיקום הנוכחי שלי'}
+          </button>
+          {locationStatus === 'error' && (
+            <p className="mt-2 text-[12px] text-[#C94B4B]">לא הצלחנו לזהות מיקום. אפשר להזין כתובת ידנית מכל מקום בארץ.</p>
+          )}
+        </section>
 
         {/* Location type */}
         <div>
@@ -76,16 +128,16 @@ export default function BookLocationPage() {
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2">
               <label className="block text-[12px] text-[#8C857B] mb-1">רחוב</label>
-              <input value={street} onChange={e => setStreet(e.target.value)} className="w-full h-[44px] px-3 bg-[#F3EEE5] border border-[#D8D1C5] rounded-[10px] text-[15px] focus:outline-none focus:border-[#7A283D]" />
+              <input value={street} onChange={e => { setStreet(e.target.value); setUsingCurrentLocation(false) }} placeholder="שם הרחוב" className="w-full h-[44px] px-3 bg-[#F3EEE5] border border-[#D8D1C5] rounded-[10px] text-[15px] focus:outline-none focus:border-[#7A283D]" />
             </div>
             <div>
               <label className="block text-[12px] text-[#8C857B] mb-1">מספר</label>
-              <input value={num} onChange={e => setNum(e.target.value)} className="w-full h-[44px] px-3 bg-[#F3EEE5] border border-[#D8D1C5] rounded-[10px] text-[15px] focus:outline-none focus:border-[#7A283D]" />
+              <input value={num} onChange={e => { setNum(e.target.value); setUsingCurrentLocation(false) }} placeholder="12" className="w-full h-[44px] px-3 bg-[#F3EEE5] border border-[#D8D1C5] rounded-[10px] text-[15px] focus:outline-none focus:border-[#7A283D]" />
             </div>
           </div>
           <div>
             <label className="block text-[12px] text-[#8C857B] mb-1">עיר</label>
-            <input value={city} onChange={e => setCity(e.target.value)} className="w-full h-[44px] px-3 bg-[#F3EEE5] border border-[#D8D1C5] rounded-[10px] text-[15px] focus:outline-none focus:border-[#7A283D]" />
+            <input value={city} onChange={e => { setCity(e.target.value); setUsingCurrentLocation(false) }} placeholder="עיר או יישוב" className="w-full h-[44px] px-3 bg-[#F3EEE5] border border-[#D8D1C5] rounded-[10px] text-[15px] focus:outline-none focus:border-[#7A283D]" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -127,8 +179,8 @@ export default function BookLocationPage() {
         <div className="flex items-center gap-3 bg-[#E9F9BF] rounded-[12px] px-4 py-3">
           <span className="w-2.5 h-2.5 rounded-full bg-[#397458] shrink-0" />
           <div>
-            <p className="text-[14px] font-semibold text-[#181715]">4 ספרים זמינים באזור שלך</p>
-            <p className="text-[12px] text-[#6D6860]">ההגעה הקרובה ביותר בעוד 38 דקות</p>
+            <p className="text-[14px] font-semibold text-[#181715]">נציג ספרים זמינים באזור שלך</p>
+            <p className="text-[12px] text-[#6D6860]">הזמינות וזמן ההגעה יחושבו לפי המיקום שבחרת</p>
           </div>
         </div>
       </div>
@@ -137,7 +189,7 @@ export default function BookLocationPage() {
       <div className="fixed bottom-0 right-0 left-0 p-4 bg-[#FFFDF8] border-t border-[#D8D1C5] shadow-[0_-18px_50px_rgba(33,27,28,0.08)]">
         <button
           disabled={!canContinue}
-          onClick={() => navigate('/book/style', { state: { ...state, address: { street, number: num, city, floor, apartment: apt, locationType: locType }, timeOption: timeOpt } })}
+          onClick={() => navigate('/book/style', { state: { ...state, address: { street, number: num, city, floor, apartment: apt, locationType: locType, coordinates: usingCurrentLocation ? coordinates : undefined }, timeOption: timeOpt } })}
           className="w-full h-[54px] bg-[#7A283D] disabled:opacity-40 text-[#FFFDF8] text-[16px] font-semibold rounded-[12px] hover:bg-[#5E1D2D] transition-colors"
         >
           המשך

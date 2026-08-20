@@ -15,7 +15,7 @@ const STEPS = [
 
 export default function BarberOnboarding() {
   const [step, setStep] = useState(0)
-  const [form, setForm] = useState({ name: '', phone: '', city: 'ירושלים', years: '', bio: '' })
+  const [form, setForm] = useState({ name: '', phone: '', city: '', years: '', bio: '' })
   const navigate = useNavigate()
 
   if (step >= STEPS.length) {
@@ -59,7 +59,7 @@ export default function BarberOnboarding() {
             {[
               { key: 'name', label: 'שם מלא', placeholder: 'שם פרטי ומשפחה' },
               { key: 'phone', label: 'טלפון', placeholder: '050-0000000', type: 'tel' },
-              { key: 'city', label: 'עיר מגורים', placeholder: 'ירושלים' },
+              { key: 'city', label: 'עיר מגורים', placeholder: 'עיר או יישוב' },
               { key: 'years', label: 'שנות ניסיון', placeholder: '5', type: 'number' },
             ].map(f => (
               <div key={f.key}>

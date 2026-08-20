@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { ArrowRight, Clock, Check } from 'lucide-react'
 import BookingProgress from '../components/BookingProgress'
@@ -6,7 +6,16 @@ import { mockServices } from '../data/mockData'
 
 export default function BookServicePage() {
   const navigate = useNavigate()
+  const { state } = useLocation()
   const [selected, setSelected] = useState<string | null>(null)
+
+  const getPriceLabel = (service: (typeof mockServices)[number]) => {
+    if (service.id === 's_father_son') {
+      return `${service.scheduledPrice} ₪ לשניהם · ${service.scheduledPrice / 2} ₪ לאדם`
+    }
+    if (service.id === 's_group') return `מ-${service.scheduledPrice} ₪ לאדם`
+    return `מ-${service.scheduledPrice} ₪`
+  }
 
   return (
     <div className="min-h-screen bg-[#F3EEE5]">
@@ -28,7 +37,7 @@ export default function BookServicePage() {
           {mockServices.map(service => (
             <button
               key={service.id}
-              onClick={() => { setSelected(service.id); setTimeout(() => navigate('/book/location', { state: { serviceId: service.id } }), 150) }}
+              onClick={() => { setSelected(service.id); setTimeout(() => navigate('/book/location', { state: { ...state, serviceId: service.id } }), 150) }}
               className={`w-full rounded-[18px] overflow-hidden border-2 transition-all text-right ${
                 selected === service.id ? 'border-[#7A283D]' : 'border-transparent bg-[#FFFDF8]'
               }`}
@@ -50,7 +59,7 @@ export default function BookServicePage() {
                     )}
                   </div>
                   <div className="flex items-center gap-4 mt-2">
-                    <span className="text-[17px] font-black text-[#181715]">מ-{service.scheduledPrice} ₪</span>
+                    <span className="text-[17px] font-black text-[#181715]">{getPriceLabel(service)}</span>
                     <div className="flex items-center gap-1 text-[12px] text-[#8C857B]">
                       <Clock size={12} />
                       {service.durationMinutes} דקות
@@ -71,7 +80,7 @@ export default function BookServicePage() {
       {selected && (
         <div className="fixed bottom-0 right-0 left-0 p-4 bg-[#FFFDF8] border-t border-[#D8D1C5] shadow-[0_-18px_50px_rgba(33,27,28,0.08)]">
           <button
-            onClick={() => navigate('/book/location', { state: { serviceId: selected } })}
+            onClick={() => navigate('/book/location', { state: { ...state, serviceId: selected } })}
             className="w-full h-[54px] bg-[#7A283D] text-[#FFFDF8] text-[16px] font-semibold rounded-[12px] hover:bg-[#5E1D2D] transition-colors"
           >
             המשך

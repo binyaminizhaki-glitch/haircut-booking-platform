@@ -1,23 +1,42 @@
+import logoImage from '../assets/cutnow-logo.png'
+
 interface LogoProps {
   dark?: boolean
   size?: 'sm' | 'md' | 'lg'
 }
 
 export default function Logo({ dark = false, size = 'md' }: LogoProps) {
-  const sizes = { sm: 'text-lg tracking-[-0.04em]', md: 'text-2xl tracking-[-0.04em]', lg: 'text-3xl tracking-[-0.05em]' }
-  const color = dark ? 'text-[#F3EEE5]' : 'text-[#181715]'
+  const sizes = {
+    sm: {
+      frame: 'w-[84px] h-[50px]',
+      image: 'w-[129px] h-[129px] left-[-26px] top-[-41px]',
+    },
+    md: {
+      frame: 'w-[108px] h-[65px]',
+      image: 'w-[166px] h-[166px] left-[-34px] top-[-52px]',
+    },
+    lg: {
+      frame: 'w-[140px] h-[84px]',
+      image: 'w-[215px] h-[215px] left-[-44px] top-[-68px]',
+    },
+  }
+  const selectedSize = sizes[size]
 
   return (
-    <span className={`font-black ${sizes[size]} ${color} select-none relative inline-flex items-center gap-1`} style={{ fontFamily: 'Heebo, sans-serif' }}>
-      CUT
-      <span className="relative">
-        NOW
-        {/* Small lime availability dot */}
-        <span
-          className="absolute -top-0.5 -left-1 w-1.5 h-1.5 rounded-full bg-[#C8F36A]"
-          aria-hidden="true"
-        />
-      </span>
+    <span
+      className={`relative inline-block shrink-0 overflow-hidden rounded-[8px] select-none ${selectedSize.frame} ${
+        dark ? 'ring-1 ring-white/15' : ''
+      }`}
+      role="img"
+      aria-label="CUTNOW"
+    >
+      <img
+        src={logoImage}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className={`pointer-events-none absolute max-w-none object-cover ${selectedSize.image}`}
+      />
     </span>
   )
 }

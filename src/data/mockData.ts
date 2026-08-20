@@ -15,9 +15,9 @@ export const HAIRCUT_PHOTOS = [
   'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=300&fit=crop&auto=format',
   'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=300&h=300&fit=crop&auto=format',
   'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=300&h=300&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1584837539680-2c2da74e9ca8?w=300&h=300&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1605497787998-d4651b9a64f9?w=300&h=300&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1593702288056-f4578b3e7aa5?w=300&h=300&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1703792685152-d13e206924d8?w=300&h=300&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1703792686667-7486746389a1?w=300&h=300&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1560328055-e938bb2ed50a?w=300&h=300&fit=crop&auto=format',
   'https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?w=300&h=300&fit=crop&auto=format',
 ]
 
@@ -26,14 +26,15 @@ export const SERVICE_PHOTOS = {
   fade: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=400&fit=crop&auto=format',
   beard: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=400&fit=crop&auto=format',
   beardOnly: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=400&fit=crop&auto=format',
-  kid: 'https://images.unsplash.com/photo-1584837539680-2c2da74e9ca8?w=600&h=400&fit=crop&auto=format',
-  fatherSon: 'https://images.unsplash.com/photo-1605497787998-d4651b9a64f9?w=600&h=400&fit=crop&auto=format',
-  group: 'https://images.unsplash.com/photo-1593702288056-f4578b3e7aa5?w=600&h=400&fit=crop&auto=format',
+  kid: 'https://images.unsplash.com/photo-1703792685152-d13e206924d8?w=600&h=400&fit=crop&auto=format',
+  fatherSon: 'https://zeus-barbershop.com/wp-content/uploads/2024/07/zeus_007-1024x576.png',
+  group: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&h=400&fit=crop&auto=format',
 }
 
 export const HERO_PHOTO = 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=900&h=1100&fit=crop&auto=format'
 export const BARBER_HERO = 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&h=1000&fit=crop&auto=format'
 export const KIT_PHOTO = 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=900&h=600&fit=crop&auto=format'
+export const EVENT_PHOTO = 'https://images.unsplash.com/photo-1485872299829-c673f5194813?w=800&h=600&fit=crop&auto=format'
 
 const mockReviews: Review[] = [
   {
@@ -173,16 +174,16 @@ export const mockBarbers: BarberProfile[] = [
 
 export const mockServices: Service[] = [
   {
-    id: 's_classic', nameHe: 'תספורת קלאסית',
-    description: 'תספורת מלאה עם מספריים ומכונה. מתאים לכל סוגי השיער.',
-    included: ['תספורת מלאה', 'גימור מכונה', 'עיצוב ראשוני', 'ניקוי מלא'],
-    scheduledPrice: 129, immediatePrice: 159, durationMinutes: 30, imageUrl: SERVICE_PHOTOS.classic, available: true,
+    id: 's_classic', nameHe: 'תספורת מספריים',
+    description: 'תספורת מלאה במספריים עם התאמה אישית וגימור מדויק.',
+    included: ['תספורת מספריים מלאה', 'גימור מכונה', 'עיצוב ראשוני', 'ניקוי מלא'],
+    scheduledPrice: 149, immediatePrice: 179, durationMinutes: 45, imageUrl: SERVICE_PHOTOS.classic, available: true,
   },
   {
     id: 's_fade', nameHe: 'פייד',
     description: 'Fade מדויק לפי הבקשה שלך. Low, Mid, High או Skin Fade.',
     included: ['פייד מדויק', 'גימור עם מכונה', 'עיצוב קו', 'ניקוי מלא'],
-    scheduledPrice: 149, immediatePrice: 179, durationMinutes: 40, imageUrl: SERVICE_PHOTOS.fade, available: true,
+    scheduledPrice: 129, immediatePrice: 159, durationMinutes: 35, imageUrl: SERVICE_PHOTOS.fade, available: true,
   },
   {
     id: 's_beard', nameHe: 'תספורת וזקן',
@@ -206,13 +207,13 @@ export const mockServices: Service[] = [
     id: 's_father_son', nameHe: 'אב ובן',
     description: 'שתי תספורות — לאב ולבן. חוויה משותפת עם הנחה.',
     included: ['שתי תספורות מלאות', 'גיזום', 'ניקוי כפול'],
-    scheduledPrice: 239, immediatePrice: 279, durationMinutes: 65, imageUrl: SERVICE_PHOTOS.fatherSon, available: true,
+    scheduledPrice: 218, immediatePrice: 258, durationMinutes: 65, imageUrl: SERVICE_PHOTOS.fatherSon, available: true,
   },
   {
     id: 's_group', nameHe: 'Group Cut',
     description: 'שלושה אנשים ומעלה באותה כתובת. מחיר טוב יותר לכולם.',
     included: ['תספורות לקבוצה', 'ניהול תור', 'מחיר קבוצתי'],
-    scheduledPrice: 119, immediatePrice: 139, durationMinutes: 40, imageUrl: SERVICE_PHOTOS.group, available: true,
+    scheduledPrice: 109, immediatePrice: 129, durationMinutes: 40, imageUrl: SERVICE_PHOTOS.group, available: true,
   },
 ]
 
@@ -317,13 +318,13 @@ export const mockAdminAlerts: AdminAlert[] = [
 
 export const mockPricingConfig: PricingConfig = {
   services: {
-    s_classic: { scheduled: 129, immediate: 159 },
-    s_fade: { scheduled: 149, immediate: 179 },
+    s_classic: { scheduled: 149, immediate: 179 },
+    s_fade: { scheduled: 129, immediate: 159 },
     s_beard: { scheduled: 189, immediate: 219 },
     s_beard_only: { scheduled: 89, immediate: 109 },
     s_kid: { scheduled: 119, immediate: 139 },
-    s_father_son: { scheduled: 239, immediate: 279 },
-    s_group: { scheduled: 119, immediate: 139 },
+    s_father_son: { scheduled: 218, immediate: 258 },
+    s_group: { scheduled: 109, immediate: 129 },
   },
   urgencyFee: 30,
   arrivalFee: 0,

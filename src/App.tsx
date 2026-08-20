@@ -1,51 +1,68 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import BookServicePage from './pages/BookServicePage'
-import BookLocationPage from './pages/BookLocationPage'
-import BookStylePage from './pages/BookStylePage'
-import BookMatchesPage from './pages/BookMatchesPage'
-import BookSummaryPage from './pages/BookSummaryPage'
-import LiveBookingPage from './pages/LiveBookingPage'
-import BookingCompletePage from './pages/BookingCompletePage'
-import BarberProfilePage from './pages/BarberProfilePage'
-import CustomerApp from './pages/CustomerApp'
-import BarberDashboard from './pages/BarberDashboard'
-import BarberOnboarding from './pages/BarberOnboarding'
-import AdminDashboard from './pages/AdminDashboard'
-import DemoPage from './pages/DemoPage'
+import { lazy, Suspense } from "react"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import DemoModeNav from "./components/DemoModeNav"
+
+const HomePage = lazy(() => import("./pages/HomePage"))
+const BookServicePage = lazy(() => import("./pages/BookServicePage"))
+const BookLocationPage = lazy(() => import("./pages/BookLocationPage"))
+const BookStylePage = lazy(() => import("./pages/BookStylePage"))
+const BookMatchesPage = lazy(() => import("./pages/BookMatchesPage"))
+const BookSummaryPage = lazy(() => import("./pages/BookSummaryPage"))
+const LiveBookingPage = lazy(() => import("./pages/LiveBookingPage"))
+const BookingCompletePage = lazy(() => import("./pages/BookingCompletePage"))
+const BarberProfilePage = lazy(() => import("./pages/BarberProfilePage"))
+const CustomerApp = lazy(() => import("./pages/CustomerApp"))
+const BarberDashboard = lazy(() => import("./pages/BarberDashboard"))
+const BarberOnboarding = lazy(() => import("./pages/BarberOnboarding"))
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"))
+const DemoPage = lazy(() => import("./pages/DemoPage"))
+
+function LoadingScreen() {
+  return (
+    <div
+      className="flex min-h-dvh items-center justify-center bg-background px-6"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-5 shadow-sm">
+        <div className="mb-5 h-3 w-24 animate-pulse rounded-full bg-border" />
+        <div className="mb-2 h-7 w-3/4 animate-pulse rounded-lg bg-border" />
+        <div className="h-4 w-full animate-pulse rounded-lg bg-border" />
+        <span className="sr-only">טוען את CUTNOW...</span>
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/demo" element={<DemoPage />} />
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/demo" element={<DemoPage />} />
 
-        {/* Booking flow */}
-        <Route path="/book/service" element={<BookServicePage />} />
-        <Route path="/book/location" element={<BookLocationPage />} />
-        <Route path="/book/style" element={<BookStylePage />} />
-        <Route path="/book/matches" element={<BookMatchesPage />} />
-        <Route path="/book/summary" element={<BookSummaryPage />} />
+          <Route path="/book/service" element={<BookServicePage />} />
+          <Route path="/book/location" element={<BookLocationPage />} />
+          <Route path="/book/style" element={<BookStylePage />} />
+          <Route path="/book/matches" element={<BookMatchesPage />} />
+          <Route path="/book/summary" element={<BookSummaryPage />} />
 
-        {/* Barber profiles */}
-        <Route path="/barbers/:id" element={<BarberProfilePage />} />
+          <Route path="/barbers/:id" element={<BarberProfilePage />} />
 
-        {/* Live booking */}
-        <Route path="/booking/:id" element={<LiveBookingPage />} />
-        <Route path="/booking/:id/complete" element={<BookingCompletePage />} />
+          <Route path="/booking/:id" element={<LiveBookingPage />} />
+          <Route path="/booking/:id/complete" element={<BookingCompletePage />} />
 
-        {/* Customer app */}
-        <Route path="/app/*" element={<CustomerApp />} />
+          <Route path="/app/*" element={<CustomerApp />} />
 
-        {/* Barber */}
-        <Route path="/barber/onboarding" element={<BarberOnboarding />} />
-        <Route path="/barber/*" element={<BarberDashboard />} />
+          <Route path="/barber/onboarding" element={<BarberOnboarding />} />
+          <Route path="/barber/*" element={<BarberDashboard />} />
 
-        {/* Admin */}
-        <Route path="/admin/*" element={<AdminDashboard />} />
-      </Routes>
+          <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="*" element={<Navigate to="/demo" replace />} />
+        </Routes>
+        <DemoModeNav />
+      </Suspense>
     </BrowserRouter>
   )
 }

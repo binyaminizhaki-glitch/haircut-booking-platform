@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Briefcase, Calendar, TrendingUp, User, Check, X, Clock, MapPin, AlertCircle } from 'lucide-react'
 import { mockBarbers, mockBarberEarnings, HAIRCUT_PHOTOS } from '../data/mockData'
@@ -47,7 +47,18 @@ function BarberHome() {
     countdown: 45,
   }
   const [offerVisible, setOfferVisible] = useState(true)
-  const [countdown, setCountdown] = useState(45)
+  const [countdown, setCountdown] = useState(jobOffer.countdown)
+
+  useEffect(() => {
+    if (!offerVisible || !available) return
+    if (countdown <= 0) {
+      setOfferVisible(false)
+      return
+    }
+
+    const timer = window.setTimeout(() => setCountdown(value => value - 1), 1000)
+    return () => window.clearTimeout(timer)
+  }, [available, countdown, offerVisible])
 
   return (
     <div className="min-h-screen bg-[#211B1C] pb-24">
@@ -143,6 +154,7 @@ function BarberHome() {
 }
 
 function BarberJobsPage() {
+  const [, setVersion] = useState(0)
   const bookings = store.getBookings().filter(b => b.barberId === barber.id && b.status !== 'completed' && b.status !== 'cancelled')
   const navigate = useNavigate()
 
@@ -189,7 +201,10 @@ function BarberJobsPage() {
                   {actions.map(a => (
                     <button
                       key={a.label}
-                      onClick={() => store.updateBookingStatus(job.id, a.next as any)}
+                      onClick={() => {
+                        store.updateBookingStatus(job.id, a.next as any)
+                        setVersion(version => version + 1)
+                      }}
                       className="w-full h-[48px] bg-[#C8F36A] text-[#181715] font-bold rounded-[12px] text-[15px]"
                     >
                       {a.label}

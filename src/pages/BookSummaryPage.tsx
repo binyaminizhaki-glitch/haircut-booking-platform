@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowRight, CreditCard, Smartphone, Check, X, AlertCircle, Users } from 'lucide-react'
 import BookingProgress from '../components/BookingProgress'
-import { mockBarbers, mockServices } from '../data/mockData'
+import { mockBarbers, mockPricingConfig, mockServices } from '../data/mockData'
 import { store } from '../data/store'
 import type { Booking } from '../data/types'
 
@@ -20,9 +20,15 @@ export default function BookSummaryPage() {
   const barber = mockBarbers.find(b => b.id === state?.barberId) || mockBarbers[0]
   const service = mockServices.find(s => s.id === state?.serviceId) || mockServices[1]
   const isImmediate = state?.timeOption === 'now'
-  const urgencyFee = isImmediate ? 30 : 0
-  const groupDiscount = groupChoice === 'plus1' ? Math.round(state?.price * 0.22) : groupChoice === 'group' ? Math.round(state?.price * 0.33) : 0
-  const finalPrice = (state?.price || service.scheduledPrice) + urgencyFee - groupDiscount
+  const urgencyFee = isImmediate ? mockPricingConfig.urgencyFee : 0
+  const unitPrice = state?.price || service.scheduledPrice
+  const participantCount = groupChoice === 'plus1' ? 2 : groupChoice === 'group' ? 3 : 1
+  const discountRate = mockPricingConfig.groupDiscounts[participantCount] || 0
+  const discountedUnitPrice = Math.round(unitPrice * (1 - discountRate))
+  const serviceSubtotal = unitPrice * participantCount
+  const discountedServiceTotal = discountedUnitPrice * participantCount
+  const groupDiscount = serviceSubtotal - discountedServiceTotal
+  const finalPrice = discountedServiceTotal + urgencyFee
 
   const handlePay = () => {
     setStep('processing')
@@ -46,14 +52,14 @@ export default function BookSummaryPage() {
           scheduledTime: arrivalTime.toISOString(),
           status: 'requested',
           haircutBrief: state?.haircutBrief || { option: 'repeat' },
-          servicePrice: state?.price || service.scheduledPrice,
+          servicePrice: serviceSubtotal,
           arrivalFee: 0,
           urgencyFee,
           groupDiscount,
           finalPrice,
           estimatedArrivalMinutes: state?.arrival || 42,
           estimatedArrivalTime: timeStr,
-          estimatedDuration: service.durationMinutes,
+          estimatedDuration: service.durationMinutes * participantCount,
           isImmediate,
           createdAt: now.toISOString(),
         }
@@ -112,9 +118,9 @@ export default function BookSummaryPage() {
 
           <div className="flex flex-col gap-3 mb-6">
             {[
-              { id: 'solo', label: 'רק אני', sub: `${state?.price || service.scheduledPrice} ₪`, discount: '' },
-              { id: 'plus1', label: 'אני ועוד אדם', sub: `${Math.round((state?.price || service.scheduledPrice) * 0.78)} ₪ לאדם`, discount: 'חיסכון 22%' },
-              { id: 'group', label: 'קבוצה (3+)', sub: `${Math.round((state?.price || service.scheduledPrice) * 0.67)} ₪ לאדם`, discount: 'חיסכון 33%' },
+              { id: 'solo', label: 'רק אני', sub: `${unitPrice} ₪`, discount: '' },
+              { id: 'plus1', label: 'אני ועוד אדם', sub: `${Math.round(unitPrice * (1 - mockPricingConfig.groupDiscounts[2]))} ₪ לאדם · ${Math.round(unitPrice * (1 - mockPricingConfig.groupDiscounts[2])) * 2} ₪ יחד`, discount: 'חיסכון 22%' },
+              { id: 'group', label: 'קבוצה של 3', sub: `${Math.round(unitPrice * (1 - mockPricingConfig.groupDiscounts[3]))} ₪ לאדם · ${Math.round(unitPrice * (1 - mockPricingConfig.groupDiscounts[3])) * 3} ₪ יחד`, discount: 'חיסכון 33%' },
             ].map(opt => (
               <button
                 key={opt.id}
@@ -160,8 +166,8 @@ export default function BookSummaryPage() {
         <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-5">
           <div className="bg-[#FFFDF8] border border-[#D8D1C5] rounded-[18px] p-4">
             <div className="flex justify-between items-center mb-1">
-              <span className="text-[14px] text-[#6D6860]">{service.nameHe}</span>
-              <span className="text-[14px] font-semibold text-[#181715]">{state?.price || service.scheduledPrice} ₪</span>
+              <span className="text-[14px] text-[#6D6860]">{service.nameHe} × {participantCount}</span>
+              <span className="text-[14px] font-semibold text-[#181715]">{serviceSubtotal} ₪</span>
             </div>
             {urgencyFee > 0 && <div className="flex justify-between items-center mb-1"><span className="text-[14px] text-[#6D6860]">דמי מיידיות</span><span className="text-[14px] font-semibold text-[#D97855]">+{urgencyFee} ₪</span></div>}
             {groupDiscount > 0 && <div className="flex justify-between items-center mb-1"><span className="text-[14px] text-[#6D6860]">הנחה קבוצתית</span><span className="text-[14px] font-semibold text-[#397458]">-{groupDiscount} ₪</span></div>}

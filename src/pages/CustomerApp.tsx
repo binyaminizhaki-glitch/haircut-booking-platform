@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Home, CalendarDays, Scissors, Heart, User, Star, Clock, Check, ArrowRight, Plus, Trash2, Edit2 } from 'lucide-react'
 import { mockBarbers, mockCutProfile, HAIRCUT_PHOTOS } from '../data/mockData'
 import { store } from '../data/store'
+import Logo from '../components/Logo'
 
 function BottomNav() {
   const location = useLocation()
@@ -39,9 +40,14 @@ function AppHome() {
 
   return (
     <div className="min-h-screen bg-[#F3EEE5] pb-24">
-      <div className="bg-[#FFFDF8] px-5 pt-12 pb-5">
-        <div className="text-[14px] text-[#8C857B] mb-1">{greeting},</div>
-        <h1 className="text-[26px] font-black text-[#181715]">בנימין</h1>
+      <div className="bg-[#FFFDF8] px-5 pt-8 pb-4 flex items-center justify-between gap-4">
+        <div>
+          <div className="text-[14px] text-[#8C857B] mb-1">{greeting},</div>
+          <h1 className="text-[26px] font-black text-[#181715]">בנימין</h1>
+        </div>
+        <Link to="/" aria-label="CUTNOW — מעבר לעמוד הבית" className="shrink-0">
+          <Logo size="sm" />
+        </Link>
       </div>
 
       <div className="px-4 py-5 flex flex-col gap-4">

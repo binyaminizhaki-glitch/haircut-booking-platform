@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowRight, Star, Clock, Check, Shield } from 'lucide-react'
 import BookingProgress from '../components/BookingProgress'
-import { mockBarbers } from '../data/mockData'
+import { mockBarbers, mockServices } from '../data/mockData'
 
 const MATCHES = [
-  { barberId: 'b1', tag: 'ההתאמה הטובה ביותר', matchPct: 94, arrival: 42, price: 179 },
-  { barberId: 'b2', tag: 'המהיר ביותר', matchPct: 81, arrival: 28, price: 149 },
-  { barberId: 'b6', tag: 'המחיר הטוב ביותר', matchPct: 87, arrival: 46, price: 159 },
+  { barberId: 'b1', tag: 'ההתאמה הטובה ביותר', matchPct: 94, arrival: 42, priceAdjustment: 20 },
+  { barberId: 'b2', tag: 'המהיר ביותר', matchPct: 81, arrival: 28, priceAdjustment: 10 },
+  { barberId: 'b6', tag: 'המחיר הטוב ביותר', matchPct: 87, arrival: 46, priceAdjustment: 0 },
 ]
 
 export default function BookMatchesPage() {
@@ -15,6 +15,7 @@ export default function BookMatchesPage() {
   const { state } = useLocation()
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<string | null>(null)
+  const service = mockServices.find(item => item.id === state?.serviceId) || mockServices[1]
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2200)
@@ -54,8 +55,9 @@ export default function BookMatchesPage() {
         <p className="text-[14px] text-[#6D6860] mb-5">מצאנו שלושה ספרים שמתאימים לקאט שביקשת</p>
 
         <div className="flex flex-col gap-4">
-          {MATCHES.map(({ barberId, tag, matchPct, arrival, price }) => {
+          {MATCHES.map(({ barberId, tag, matchPct, arrival, priceAdjustment }) => {
             const barber = mockBarbers.find(b => b.id === barberId)!
+            const price = service.scheduledPrice + priceAdjustment
             const arrivalTime = new Date(Date.now() + arrival * 60 * 1000)
             const timeStr = arrivalTime.getHours() + ':' + arrivalTime.getMinutes().toString().padStart(2, '0')
             const isSelected = selected === barberId

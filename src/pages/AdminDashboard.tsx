@@ -84,6 +84,7 @@ function AdminHome() {
 
 function AdminBookings() {
   const [filter, setFilter] = useState('all')
+  const [, setVersion] = useState(0)
   const bookings = store.getBookings()
   const FILTERS = [
     { id: 'all', label: 'הכול' },
@@ -133,7 +134,15 @@ function AdminBookings() {
                   </td>
                   <td className="py-2.5 px-3 text-[14px] font-bold text-[#C8F36A]">{b.finalPrice} ₪</td>
                   <td className="py-2.5 px-3">
-                    <button onClick={() => store.updateBookingStatus(b.id, 'cancelled')} className="text-[12px] text-[#C94B4B] hover:underline">בטל</button>
+                    <button
+                      onClick={() => {
+                        store.updateBookingStatus(b.id, 'cancelled')
+                        setVersion(version => version + 1)
+                      }}
+                      className="text-[12px] text-[#C94B4B] hover:underline"
+                    >
+                      בטל
+                    </button>
                   </td>
                 </tr>
               )
@@ -190,7 +199,7 @@ function AdminPricing() {
   const [config, setConfig] = useState(mockPricingConfig)
 
   const SERVICE_NAMES: Record<string, string> = {
-    s_classic: 'תספורת קלאסית', s_fade: 'פייד', s_beard: 'תספורת וזקן',
+    s_classic: 'תספורת מספריים', s_fade: 'פייד', s_beard: 'תספורת וזקן',
     s_beard_only: 'סידור זקן', s_kid: 'תספורת לילד', s_father_son: 'אב ובן',
   }
 

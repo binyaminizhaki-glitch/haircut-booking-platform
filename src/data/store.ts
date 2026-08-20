@@ -8,6 +8,7 @@ const CHANNEL = 'cutnow_sync'
 
 let bc: BroadcastChannel | null = null
 try { bc = new BroadcastChannel(CHANNEL) } catch { /* safari private */ }
+const localListeners = new Set<() => void>()
 
 export type DemoRole = 'customer' | 'barber' | 'admin' | null
 
@@ -22,6 +23,7 @@ function loadBookings(): Booking[] {
 
 function saveBookings(bookings: Booking[]) {
   localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings))
+  localListeners.forEach(listener => listener())
   bc?.postMessage({ type: 'bookings_updated' })
 }
 
@@ -63,9 +65,11 @@ export const store = {
   },
   onSync(callback: () => void): () => void {
     const handler = () => callback()
+    localListeners.add(callback)
     bc?.addEventListener('message', handler)
     window.addEventListener('storage', handler)
     return () => {
+      localListeners.delete(callback)
       bc?.removeEventListener('message', handler)
       window.removeEventListener('storage', handler)
     }

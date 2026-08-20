@@ -7,7 +7,7 @@ interface Props {
   className?: string
 }
 
-// Jerusalem simplified SVG map with neighbourhood labels and streets
+// Generic service-area SVG map with neighbourhood labels and streets
 export default function JerusalemMap({ dark = false, showRoute = true, progress = 0.4, className = '' }: Props) {
   const dotRef = useRef<SVGCircleElement>(null)
   const pathRef = useRef<SVGPathElement>(null)
@@ -32,7 +32,7 @@ export default function JerusalemMap({ dark = false, showRoute = true, progress 
       viewBox="0 0 400 300"
       className={`w-full h-full ${className}`}
       style={{ background: bg, borderRadius: '20px' }}
-      aria-label="מפת ירושלים מדומה"
+      aria-label="מפת מסלול באזור הלקוח"
     >
       {/* Streets grid */}
       <g stroke={streetColor} strokeWidth="1" fill="none">
@@ -57,15 +57,15 @@ export default function JerusalemMap({ dark = false, showRoute = true, progress 
 
       {/* Neighbourhood labels */}
       <g fill={labelColor} fontSize="10" fontFamily="Heebo, sans-serif" textAnchor="middle">
-        <text x="100" y="85">רחביה</text>
-        <text x="240" y="90">קטמון</text>
-        <text x="180" y="170">בקעה</text>
-        <text x="320" y="160">ארנונה</text>
-        <text x="80" y="175">נחלאות</text>
-        <text x="310" y="85">טלביה</text>
+        <text x="100" y="85">צפון העיר</text>
+        <text x="240" y="90">אזור מגורים</text>
+        <text x="180" y="170">מרכז העיר</text>
+        <text x="320" y="160">האזור שלך</text>
+        <text x="80" y="175">מערב העיר</text>
+        <text x="310" y="85">מזרח העיר</text>
         <text x="100" y="240">מרכז</text>
-        <text x="250" y="240">גן העיר</text>
-        <text x="350" y="240">תלפיות</text>
+        <text x="250" y="240">אזור מסחרי</text>
+        <text x="350" y="240">דרום העיר</text>
       </g>
 
       {showRoute && (
