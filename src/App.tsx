@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import AiAssistant from "./components/AiAssistant"
 import DemoModeNav from "./components/DemoModeNav"
 
 const HomePage = lazy(() => import("./pages/HomePage"))
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/demo" replace />} />
         </Routes>
         <DemoModeNav />
+        <AiAssistant />
       </Suspense>
     </BrowserRouter>
   )

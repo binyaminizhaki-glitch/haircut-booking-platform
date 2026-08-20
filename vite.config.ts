@@ -1,14 +1,16 @@
-import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type HtmlTagDescriptor, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
 import siteConfiguration from './.figma/make/site.json'
+import { handleGeminiChat } from './server/gemini'
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === 'development'
+  const env = loadEnv(mode, process.cwd(), '')
 
   return {
     base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : '/',
@@ -23,6 +25,10 @@ export default defineConfig(({ mode }) => {
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: '/src/**/*.stories.{ts,tsx,js,jsx}' }),
+      geminiChatEndpoint({
+        apiKey: env.GEMINI_API_KEY,
+        model: env.GEMINI_MODEL,
+      }),
     ],
     resolve: {
       alias: {
@@ -41,6 +47,28 @@ export default defineConfig(({ mode }) => {
     },
   }
 })
+
+function geminiChatEndpoint(config: { apiKey?: string; model?: string }): Plugin {
+  const middleware = () =>
+    async (
+      req: import('node:http').IncomingMessage,
+      res: import('node:http').ServerResponse,
+      next: () => void,
+    ) => {
+      if (req.url?.split('?')[0] !== '/api/chat') return next()
+      await handleGeminiChat(req, res, config)
+    }
+
+  return {
+    name: 'cutnow-gemini-chat',
+    configureServer(server) {
+      server.middlewares.use(middleware())
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(middleware())
+    },
+  }
+}
 
 type FigmaSiteConfiguration = {
   title?: string
